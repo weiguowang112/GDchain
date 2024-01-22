@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.TopicMapper">
+    <select id="getTopicReviewList" resultType="com.example.rtdataassetcoord.dto.TopicReviewListDto">
+        SELECT a.id as caseId, orgName, topicName, topicType, collaborate, orgWebsite
+        FROM topic as a
+        LEFT JOIN `user` as b on a.userId = b.id
+        LEFT JOIN qualification_review as c on a.userId = c.userId
+        where a.`status` = 0
+    </select>
+
+    <select id="topicList" resultType="com.example.rtdataassetcoord.dto.TopicListDto">
+        SELECT topic.id,topicName,topicType,keyHolderId,orgName,(SELECT COUNT(*) from topic_join where topicId=topic.id) as
+        joinOrgCount,create_time,ADDDATE(create_time, INTERVAL 7 DAY) as topicStartTime
+        from topic LEFT JOIN `user` ON keyHolderId=`user`.id
+        where `status`=1
+    </select>
+
+
+    <select id="topicDataScreen" resultType="com.example.rtdataassetcoord.dto.TopicDataScreenDto">
+        SELECT
+        (SELECT COUNT(*) FROM `topic_join` WHERE userId=#{id} and DATE_FORMAT(DATE(create_time), '%Y-%m') =
+        DATE_FORMAT(CURDATE(), '%Y-%m')) as thisMonthCoTopics,
+        (SELECT COUNT(*) FROM topic WHERE keyHolderId=#{id} and DATE_FORMAT(DATE(create_time), '%Y-%m') =
+        DATE_FORMAT(CURDATE(), '%Y-%m')) as thisMonthGetKey,
+        (SELECT COUNT(*) FROM `topic_join` WHERE userId=#{id}) as allCoTopics;
+    </select>
+
+
+    <select id="voteList" resultType="com.example.rtdataassetcoord.dto.VoteListDto">
+        SELECT b.id,topicName,orgName,(SELECT COUNT(*) FROM topic_join where topicId=b.id) as
+        joinOrgCount,ADDDATE(b.create_time, INTERVAL 4 DAY) as voteStartTime,ADDDATE(b.create_time, INTERVAL 7 DAY) as
+        voteEndTime, vote_status
+        FROM `topic_join` as a
+        LEFT JOIN topic as b on a.topicId=b.id
+        LEFT JOIN `user` as c on a.userId=c.id
+        WHERE a.userId=#{id} and a.vote_status=0
+    </select>
+
+    <select id="candidateList" resultType="com.example.rtdataassetcoord.dto.CandidateDto">
+        SELECT userId,orgName,idea FROM `topic_join`
+        LEFT JOIN `user` on topic_join.userId=`user`.id
+        where topicId=#{topicId}
+    </select>
+
+    <select id="getNewTopicList" resultType="com.example.rtdataassetcoord.dto.NewTopicListDto">
+        SELECT topicName,u2.orgName as deliverName,u1.orgName as keyHolderName,topic.create_time,ADDDATE(create_time, INTERVAL 7 DAY) as topicStartTime
+        from topic
+        LEFT JOIN `user` u1 ON keyHolderId=u1.id
+        LEFT JOIN `user` u2 ON topic.userId=u2.id
+        where `status`!=0
+        ORDER BY topicStartTime DESC
+    </select>
+</mapper>

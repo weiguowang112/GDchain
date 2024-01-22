@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.MediaMapper">
+
+    <select id="getMediaRankList" resultType="com.example.rtdataassetcoord.dto.MediaRankListDto">
+        select a.id as id,a.userId,orgName,c.rank as lastMonthRank,c.grade as lastMonthGrade ,LAST_DAY(a.create_time) as deadline from media as a
+        LEFT JOIN `user` as b on a.userId=b.id
+        LEFT JOIN media_rank as c  on  a.userId=c.userId
+        WHERE a.`status`=0 and c.create_time >= DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 1 MONTH)
+        AND c.create_time &lt; DATE_FORMAT(NOW(), '%Y-%m-01')
+    </select>
+
+</mapper>

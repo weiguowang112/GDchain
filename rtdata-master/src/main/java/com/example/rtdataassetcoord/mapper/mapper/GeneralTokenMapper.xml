@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.GeneralTokenMapper">
+
+    <select id="getDataAssetList" resultType="com.example.rtdataassetcoord.dto.DataAssetListDto">
+        SELECT a.id AS caseId ,c.orgName,a.type,b.rank,b.grade,a.nftAddress FROM `general_token` as a
+        LEFT JOIN media_rank as b on a.userId=b.userId and DATE_FORMAT(b.create_time, '%Y-%m') = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
+        LEFT JOIN `user` as c on a.userId=c.id where a.`status`=0
+    </select>
+
+
+    <select id="getDataScreen" resultType="com.example.rtdataassetcoord.dto.DataScreenDto">
+        SELECT (SELECT COUNT(*) FROM general_token where `status`=1) as totalDataAsset,(SELECT COUNT(DISTINCT userId) FROM general_token WHERE `status`=1) as totalIssuer,(SELECT COUNT(*) FROM general_token WHERE MONTH(create_time) = MONTH(CURRENT_DATE()) AND `status`=1) as newIssueThisMonth,(SELECT COUNT(*) FROM general_token WHERE DATE(create_time) = CURDATE() AND `status`=1) as newIssueToday
+    </select>
+
+
+    <select id="getMarkAssetList"  parameterType="Integer" resultType="com.example.rtdataassetcoord.dto.MarkAssetListDto">
+        SELECT a.id as id,userId,orgName,name,number,price,filePath FROM general_token as a ,`user` as b WHERE a.status = 1 and a.userId=b.id
+        <if test="type!=null">
+            and type =#{type}
+        </if>
+    </select>
+
+    <select id="getNewDataAssetList" resultType="com.example.rtdataassetcoord.dto.NewDataAssetListDto">
+        SELECT name,orgName,number,price,create_time from general_token LEFT JOIN `user` on `user`.id=userId where `status`=1
+    </select>
+</mapper>

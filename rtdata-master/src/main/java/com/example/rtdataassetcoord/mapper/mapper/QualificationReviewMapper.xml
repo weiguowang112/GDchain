@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.QualificationReviewMapper">
+
+
+    <select id="getQrList" resultType="com.example.rtdataassetcoord.dto.QualificationReviewListDto">
+        SELECT a.id AS caseId ,orgName,legalPerson,legalPersonNumber,enterpriseCode,orgWebsite
+        FROM `qualification_review` as a LEFT JOIN `user` as b on a.userId=b.id  where a.`status`=0
+    </select>
+
+
+    <select id="test" resultType="Integer">
+        SELECT id FROM `qualification_review` where `status`=0
+    </select>
+
+
+</mapper>

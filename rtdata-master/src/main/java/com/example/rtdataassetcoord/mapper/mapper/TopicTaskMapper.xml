@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.TopicTaskMapper">
+    <select id="getTaskByUserId" resultType="com.example.rtdataassetcoord.dto.TaskListDto">
+        SELECT a.id,c.orgName,b.topicName,task_time from topic_task as a
+        LEFT JOIN topic as b on a.topic_id=b.id
+        LEFT JOIN `user` AS c ON c.id=b.userId
+        where a.receiver_id=#{id} and a.`status`=0
+    </select>
+
+    <select id="getReviewTaskByUserId" resultType="com.example.rtdataassetcoord.dto.TaskReviewListDto">
+        SELECT a.id,c.orgName,b.topicName,task_time from topic_task as a
+        LEFT JOIN topic as b on a.topic_id=b.id
+        LEFT JOIN `user` AS c ON c.id=a.receiver_id
+        where a.assigner_id=#{id} and a.`status`=1
+    </select>
+</mapper>

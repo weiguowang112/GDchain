@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.rtdataassetcoord.mapper.MediaRankMapper">
+    <select id="getAllMediaRank" resultType="com.example.rtdataassetcoord.dto.MediaRankMonthDto">
+        SELECT b.orgName, `rank`, grade,headImg
+        FROM media_rank as a
+        LEFT JOIN `user` as b on a.userId = b.id
+        WHERE a.create_time >= DATE_SUB(DATE_FORMAT(NOW(), '%Y-%m-01'), INTERVAL 1 MONTH)
+        AND a.create_time &lt; DATE_FORMAT(NOW(), '%Y-%m-01')
+    </select>
+
+    <select id="getMediaRankRate" resultType="com.example.rtdataassetcoord.task.MediaRankRate">
+        SELECT
+            userId,
+            fansNum,
+            SUM(readNum)/fansNum as read_rate,
+            SUM(commentNum)/SUM(readNum) as comment_rate,
+            SUM(forwardNum)/SUM(readNum) AS forward_rate,
+            SUM(likeNum)/SUM(readNum) AS like_rate
+        FROM media
+        RIGHT JOIN media_content
+        ON media.id = media_content.mediaId
+        WHERE `status` = 1 and YEAR(media.create_time) = YEAR(CURDATE()) AND MONTH(media.create_time) = MONTH(CURDATE())
+        GROUP BY media.id
+    </select>
+</mapper>

@@ -1,0 +1,21 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://47.107.124.145:3306/rtdata
+    username: root
+    password: Blockchain123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-request-size: 50000MB
+      max-file-size: 20000MB
+
+
+
+mybatis-plus:
+  mapper-locations:
+    - classpath*:com/example/**/mapper/*.xml   #xml映射路径
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #sql输出
